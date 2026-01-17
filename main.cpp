@@ -11,7 +11,6 @@ int main()
 
     bool Test_CheckBox = false;
     int counter = 0;
-    float load = 0.0f;
     static bool start = true;
 
     sf::RenderWindow window(
@@ -22,10 +21,17 @@ int main()
     //Init ImGUI
     SFML::Init(window);
 
-    static ImGuiIO& io = ImGui::GetIO();
-    GetIO().IniFilename = nullptr;
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    ImGuiIO& io = ImGui::GetIO();
+    //GetIO().IniFilename = nullptr;
 
     sf::Clock deltaClock;
+
+    // SFML Draw space
+    sf::RenderTexture Scene;
+
+    sf::Texture texture("assets/icons/folder.png");
 
     while (window.isOpen())
     {
@@ -40,26 +46,16 @@ int main()
         }
         ImGui::SFML::Update(window, deltaClock.restart());
 
-
         // Default window
-        if (start == true)
-        {
-            ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-            ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_FirstUseEver);
-            start = false;
-        }
 
-        Begin("Welcome to Meowy Engine :3");
-        Text("Loading please wait...");
+        Begin("Assets");
+        Text("Root/");
 
-        ProgressBar(load, ImVec2(0.f,0.0f));
-        SetItemTooltip("Loading bar");
-        // Soon add a real loading
+        Image(texture, sf::Vector2f(128,128));
+
         End();
 
-        load += deltaClock.getElapsedTime().asSeconds();
-
-        window.clear(sf::Color::White);
+        window.clear(sf::Color::Black);
 
         SFML::Render(window);
 
