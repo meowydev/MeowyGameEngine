@@ -6,12 +6,12 @@
 #include <spdlog/spdlog.h>
 using namespace ImGui;
 
-
 int main()
 {
 
     bool Test_CheckBox = false;
     int counter = 0;
+    ImVec4 color = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
 
     sf::RenderWindow window(
         sf::VideoMode({800, 600}),
@@ -37,10 +37,11 @@ int main()
         }
         ImGui::SFML::Update(window, deltaClock.restart());
 
+
         // Default window
 
         Begin("Welcome to Meowy Engine :3");
-        Text("Welcome :333");
+        Text("Test element");
         if (Button("Counter +"))
         {
             counter++;
@@ -52,6 +53,12 @@ int main()
         }
 
         Text("Counter: %d", counter);
+
+        ColorEdit4("Color", (float*)&color);
+
+        TextColored(color,"Colored text");
+
+
 
         End();
 
