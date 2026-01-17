@@ -11,15 +11,19 @@ int main()
 
     bool Test_CheckBox = false;
     int counter = 0;
-    ImVec4 color = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
+    float load = 0.0f;
+    static bool start = true;
 
     sf::RenderWindow window(
-        sf::VideoMode({800, 600}),
+        sf::VideoMode({1280, 720}),
         "Meowy Engine V1"
     );
 
     //Init ImGUI
     SFML::Init(window);
+
+    static ImGuiIO& io = ImGui::GetIO();
+    GetIO().IniFilename = nullptr;
 
     sf::Clock deltaClock;
 
@@ -39,28 +43,22 @@ int main()
 
 
         // Default window
+        if (start == true)
+        {
+            ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_FirstUseEver);
+            start = false;
+        }
 
         Begin("Welcome to Meowy Engine :3");
-        Text("Test element");
-        if (Button("Counter +"))
-        {
-            counter++;
-        }
-        SameLine();
-        if (Button("Counter -"))
-        {
-            counter--;
-        }
+        Text("Loading please wait...");
 
-        Text("Counter: %d", counter);
-
-        ColorEdit4("Color", (float*)&color);
-
-        TextColored(color,"Colored text");
-
-
+        ProgressBar(load, ImVec2(0.f,0.0f));
+        SetItemTooltip("Loading bar");
 
         End();
+
+        load += deltaClock.getElapsedTime().asSeconds();
 
         window.clear(sf::Color::White);
 
