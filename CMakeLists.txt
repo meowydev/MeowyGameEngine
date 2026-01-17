@@ -52,3 +52,11 @@ target_link_libraries(MeowyGameEngine
         imgui
         ImGui-SFML
 )
+
+add_custom_command(
+        TARGET MeowyGameEngine
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+)
