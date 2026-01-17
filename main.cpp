@@ -54,7 +54,7 @@ int main()
 
         ProgressBar(load, ImVec2(0.f,0.0f));
         SetItemTooltip("Loading bar");
-
+        // Soon add a real loading
         End();
 
         load += deltaClock.getElapsedTime().asSeconds();
