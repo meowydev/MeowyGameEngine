@@ -45,6 +45,11 @@ int main()
         {
             counter++;
         }
+        SameLine();
+        if (Button("Counter -"))
+        {
+            counter--;
+        }
 
         Text("Counter: %d", counter);
 
@@ -56,5 +61,6 @@ int main()
 
         window.display();
     }
+    SFML::Shutdown();
 
 }
