@@ -33,6 +33,11 @@ int main()
 
     sf::Texture texture("assets/icons/folder.png");
 
+    sf::RectangleShape Test({10, 10});
+    Test.setFillColor(sf::Color::White);
+
+    std::vector<sf::RectangleShape> RectangleShapes;
+
     while (window.isOpen())
     {
         while (auto event = window.pollEvent())
@@ -43,19 +48,55 @@ int main()
             {
                 window.close();
             }
+
+            if (event->is<sf::Event::KeyPressed>())
+            {
+                auto key = event->getIf<sf::Event::KeyPressed>()->code;
+
+                if (key == sf::Keyboard::Key::D)
+                {
+                    Test.setPosition(Test.getPosition() + sf::Vector2f(10, 0));
+                }
+
+            }
+
         }
+
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        // Default window
+        // Assets window
 
-        Begin("Assets");
+        Begin("Assets | Dev Menu");
         Text("Root/");
+
+        if (Button("Create object"))
+        {
+
+        }
 
         Image(texture, sf::Vector2f(128,128));
 
         End();
 
+        Begin("Scene");
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        sf::Vector2u newSize(
+            static_cast<unsigned>(avail.x),
+            static_cast<unsigned>(avail.y)
+        );
+
+        if (newSize.x > 0 && newSize.y > 0 &&
+            Scene.getSize() != newSize)
+        {
+            Scene.resize(newSize);
+        }
+        Image(Scene, avail);
+        End();
+
         window.clear(sf::Color::Black);
+        Scene.clear(sf::Color::Black);
+
+        Scene.draw(Test);
 
         SFML::Render(window);
 
