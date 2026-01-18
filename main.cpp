@@ -24,7 +24,7 @@ int main()
     ImGuiStyle& style = ImGui::GetStyle();
 
     ImGuiIO& io = ImGui::GetIO();
-    //GetIO().IniFilename = nullptr;
+    GetIO().IniFilename = nullptr;
 
     sf::Clock deltaClock;
 
@@ -66,12 +66,15 @@ int main()
 
         // Assets window
 
-        Begin("Assets | Dev Menu");
+        Begin("Assets");
         Text("Root/");
 
         if (Button("Create object"))
         {
-
+            sf::RectangleShape Shape({30,30});
+            Shape.setFillColor(sf::Color::Yellow);
+            Shape.setPosition(Test.getPosition());
+            RectangleShapes.push_back(Shape);
         }
 
         Image(texture, sf::Vector2f(128,128));
@@ -97,6 +100,11 @@ int main()
         Scene.clear(sf::Color::Black);
 
         Scene.draw(Test);
+
+        for (const auto& obj : RectangleShapes)
+        {
+            Scene.draw(obj);
+        }
 
         SFML::Render(window);
 
