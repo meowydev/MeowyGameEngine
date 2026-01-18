@@ -34,7 +34,7 @@ int main()
     sf::Texture texture("assets/icons/folder.png");
 
     sf::RectangleShape Test({10, 10});
-    Test.setFillColor(sf::Color::White);
+    Test.setFillColor(sf::Color::Blue);
 
     std::vector<sf::RectangleShape> RectangleShapes;
 
@@ -94,9 +94,7 @@ int main()
             Scene.resize(newSize);
         }
         Image(Scene, avail);
-        End();
-
-        window.clear(sf::Color::Black);
+        
         Scene.clear(sf::Color::Black);
 
         Scene.draw(Test);
