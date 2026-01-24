@@ -43,7 +43,10 @@ set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/external/imgui CACHE PATH "" FORCE)
 add_subdirectory(external/imgui-sfml)
 
 # ---- executable
-add_executable(MeowyGameEngine main.cpp)
+add_executable(MeowyGameEngine main.cpp
+        engine/windows.h
+        engine/includesh.h
+        engine/includes.h)
 
 # ---- link libs
 target_link_libraries(MeowyGameEngine

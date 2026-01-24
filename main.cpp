@@ -1,143 +1,138 @@
-#include <SFML/Graphics.hpp>        // SFML графика
-#include <SFML/Audio.hpp>          // SFML аудио (чтоб CMake не ныл)
-#include <imgui.h>                 // Dear ImGui
-#include <imgui-SFML.h>            // ImGui + SFML биндинг
-#include <vector>                  // std::vector
+#include <SFML/Graphics.hpp>     // SFML
+#include <imgui.h>              // ImGui core
+#include <imgui_internal.h>
+#include <imgui-SFML.h>         // ImGui-SFML
+#include <vector>               // std::vector
+#include <algorithm>            // std::min
+#include "engine/windows.h"
+
+sf::RenderTexture scenes;
 
 int main()
 {
-    // ===== SFML WINDOW =====
-
     sf::RenderWindow window(
-        sf::VideoMode(1280, 720),   // Размер окна
-        "Meowy Engine V1",           // Заголовок
-        sf::Style::Default           // Стандартный стиль
+        sf::VideoMode(1280, 720),
+        "Meowy Engine"
     );
 
-    window.setFramerateLimit(60);   // Ограничение FPS
+    ImGui::SFML::Init(window);
 
-    // ===== IMGUI INIT =====
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // enable docking
+    io.IniFilename = nullptr;                          // disable ini
 
-    ImGui::SFML::Init(window);      // Инициализация ImGui-SFML
+    // ---------------- STYLE ----------------
 
-    ImGuiIO& io = ImGui::GetIO();   // Доступ к IO
+    ImGuiStyle& style = ImGui::GetStyle();
 
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // ВКЛЮЧАЕМ DOCKING
-    io.IniFilename = nullptr;       // ОТКЛЮЧАЕМ imgui.ini
+    style.WindowPadding      = ImVec2(0, 0);
+    style.WindowBorderSize   = 0.f;
+    style.FrameBorderSize    = 0.f;
+    style.ChildBorderSize    = 0.f;
+    style.DockingSeparatorSize = 1.f;
+    style.TabRounding      = 0.f;
 
-    // ===== STYLE (чтоб не серое говно) =====
+    style.Colors[ImGuiCol_FrameBg] = {112.f / 255.f, 112.f / 255.f, 112.f / 255.f, 0.f};
+    
+    // ---------------- CLOCK ----------------
 
-    ImGuiStyle& style = ImGui::GetStyle(); // Получаем стиль
-    style.WindowRounding = 4.f;      // Скругление окон
-    style.FrameRounding  = 4.f;      // Скругление кнопок
-    style.GrabRounding   = 4.f;      // Скругление слайдеров
+    sf::Clock deltaClock;
 
-    // ===== CLOCK =====
+    sf::RectangleShape cube({50.f, 50.f});
+    cube.setFillColor(sf::Color::Green);
+    cube.setPosition(200.f, 200.f);
 
-    sf::Clock deltaClock;            // Часы для deltaTime
+    // ---------------- DOCK STATE ----------------
 
-    // ===== SCENE (SFML DRAW SPACE) =====
+    static bool firstFrame = true; // run layout once
 
-    sf::RenderTexture scene;         // RenderTexture для сцены
-    scene.create(1280, 720);          // Начальный размер
-
-    sf::RectangleShape test({50,50}); // Тестовый объект
-    test.setFillColor(sf::Color::White);
-    test.setPosition(100.f, 100.f);
-
-    std::vector<sf::RectangleShape> objects; // Список объектов
-
-    // ===== MAIN LOOP =====
+    // ---------------- LOOP ----------------
 
     while (window.isOpen())
     {
-        // ----- EVENTS -----
+        // ---------- EVENTS ----------
 
         sf::Event event;
         while (window.pollEvent(event))
         {
-            ImGui::SFML::ProcessEvent(window, event); // Передаём события ImGui
+            ImGui::SFML::ProcessEvent(window, event);
 
-            if (event.type == sf::Event::Closed)      // Закрытие окна
+            if (event.type == sf::Event::Closed)
                 window.close();
-
-            if (event.type == sf::Event::KeyPressed)  // Клавиши
-            {
-                if (event.key.code == sf::Keyboard::D)
-                    test.move(10.f, 0.f);              // Двигаем объект
-            }
         }
 
-        // ----- IMGUI UPDATE -----
+        // ---------- UPDATE ----------
 
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        // ===== GLOBAL DOCKSPACE =====
-        // Делает весь viewport док-зоной (Unity-style)
+        // ---------- DOCK ROOT ----------
 
-        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+        ImGuiViewport* vp = ImGui::GetMainViewport();
 
-        // ===== ASSETS WINDOW =====
+        ImGui::SetNextWindowPos(vp->WorkPos);
+        ImGui::SetNextWindowSize(vp->WorkSize);
+        ImGui::SetNextWindowViewport(vp->ID);
 
-        ImGui::Begin("Assets");        // Окно Assets
+        ImGuiWindowFlags rootFlags =
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus |
+            ImGuiWindowFlags_NoBackground;
 
-        ImGui::Text("Root/");          // Текст
+        ImGui::Begin("DockRoot", nullptr, rootFlags);
 
-        if (ImGui::Button("Create object")) // Кнопка
+        ImGuiID dockspaceID = ImGui::GetID("MainDockspace");
+        ImGui::DockSpace(dockspaceID);
+
+        ImGui::End();
+
+        // ---------- DEFAULT LAYOUT (ONCE) ----------
+
+        static ImGuiID dockScene  = 0;
+        static ImGuiID dockAssets = 0;
+
+        if (firstFrame)
         {
-            sf::RectangleShape obj({30,30});
-            obj.setFillColor(sf::Color::Yellow);
-            obj.setPosition(test.getPosition());
-            objects.push_back(obj);    // Добавляем объект
-        }
+            ImGui::DockBuilderRemoveNode(dockspaceID);
+            ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace);
+            ImGui::DockBuilderSetNodeSize(dockspaceID, vp->WorkSize);
 
-        ImGui::End();                  // Конец Assets
-
-        // ===== SCENE WINDOW =====
-
-        ImGui::Begin("Scene");         // Окно Scene
-
-        ImVec2 avail = ImGui::GetContentRegionAvail(); // Свободное место
-
-        // Меняем размер RenderTexture под окно
-        if (avail.x > 0 && avail.y > 0)
-        {
-            sf::Vector2u newSize(
-                static_cast<unsigned>(avail.x),
-                static_cast<unsigned>(avail.y)
+            // split vertically: top = Scene, bottom = Assets
+            dockScene = dockspaceID;
+            dockAssets = ImGui::DockBuilderSplitNode(
+                dockScene,
+                ImGuiDir_Down,
+                0.5f,
+                nullptr,
+                &dockScene
             );
 
-            if (scene.getSize() != newSize)
-                scene.create(newSize.x, newSize.y);
+            ImGui::DockBuilderDockWindow("Scene", dockScene);
+            ImGui::DockBuilderDockWindow("Assets", dockAssets);
+
+            ImGui::DockBuilderFinish(dockspaceID);
+
+            firstFrame = false;
         }
 
-        // Показываем RenderTexture в ImGui
-        ImGui::Image(
-            scene,                     // RenderTexture
-            sf::Vector2f(avail.x, avail.y)
-        );
+        meowyengine::defaultwindows();
 
-        ImGui::End();                  // Конец Scene
+        // ---------- RENDER SCENE ----------
 
-        // ===== SFML RENDER =====
+        scene.clear(sf::Color(30, 30, 30));
+        scene.draw(cube);
+        scene.display();
 
-        scene.clear(sf::Color(26,26,26)); // Тёмный фон сцены
-        scene.draw(test);                // Рисуем объект
+        // ---------- FINAL ----------
 
-        for (auto& obj : objects)
-            scene.draw(obj);             // Рисуем остальные
-
-        scene.display();                 // ОБЯЗАТЕЛЬНО display()
-
-        // ===== FINAL DRAW =====
-
-        window.clear(sf::Color::Black);  // Чистим окно
-        ImGui::SFML::Render(window);     // Рендер ImGui
-        window.display();                // Показываем кадр
+        window.clear(sf::Color::Black);
+        ImGui::SFML::Render(window);
+        window.display();
     }
 
-    // ===== SHUTDOWN =====
-
-    ImGui::SFML::Shutdown();             // Корректное завершение
+    ImGui::SFML::Shutdown();
     return 0;
 }
