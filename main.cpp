@@ -55,7 +55,7 @@ int main()
 
     while (window.isOpen())
     {
-        // ---------- EVENTS ----------
+        // ---------- EVENTS ----------Booo
 
         sf::Event event;
         while (window.pollEvent(event))
