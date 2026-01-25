@@ -2,10 +2,10 @@
 #include <imgui.h>              // ImGui core
 #include <imgui_internal.h>
 #include <imgui-SFML.h>         // ImGui-SFML
+#include <spdlog/spdlog.h>
 #include <vector>               // std::vector
 #include <algorithm>            // std::min
-
-
+#include "engine/CodeEditor.h"
 
 int main()
 {
@@ -31,6 +31,7 @@ int main()
     style.Colors[ImGuiCol_FrameBg] = {112.f / 255.f, 112.f / 255.f, 112.f / 255.f, 0.f};
 
     sf::Clock deltaClock;
+    CodeEditor editor;
 
     sf::RenderTexture scene;
 
@@ -112,13 +113,17 @@ int main()
         }
         if (ImGui::BeginTabItem("Code Editor"))
         {
-            ImGui::Text("Code Editor");
-
+            editor.Draw();
             ImGui::EndTabItem();
         }
         if (ImGui::BeginTabItem("DevMenu"))
         {
-            ImGui::Text("Not implemented yet");
+            if (ImGui::Button("Crash"))
+            {
+                IM_ASSERT(false && "Crash button pressed");
+            }
+
+            ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
         ImGui::End();
