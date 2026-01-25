@@ -4,17 +4,15 @@
 #include <imgui-SFML.h>         // ImGui-SFML
 #include <vector>               // std::vector
 #include <algorithm>            // std::min
-#include "engine/windows.h"
 
 sf::RenderTexture scene;
+sf::RenderWindow window(
+    sf::VideoMode(1280, 720),
+    "Meowy Engine"
+);
 
 int main()
 {
-    sf::RenderWindow window(
-        sf::VideoMode(1280, 720),
-        "Meowy Engine"
-    );
-
     ImGui::SFML::Init(window);
 
     ImGuiIO& io = ImGui::GetIO();
@@ -118,9 +116,46 @@ int main()
             firstFrame = false;
         }
 
-        meowyengine::defaultwindows();
+        ImGui::Begin("General");
+        ImGui::BeginTabBar("General_MAIN");
+        if (ImGui::BeginTabItem("Assets"))
+        {
+            ImGui::Text("Placeholder...");
 
-        // ---------- RENDER SCENE ----------
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Code Editor"))
+        {
+            ImGui::Text("Code Editor");
+
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("DevMenu"))
+        {
+            ImGui::Text("Not implemented yet");
+        }
+        ImGui::EndTabBar();
+        ImGui::End();
+
+        ImGui::Begin("Scene");
+
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+
+        if (avail.x < 1.f) avail.x = 1.f;
+        if (avail.y < 1.f) avail.y = 1.f;
+
+        if (scene.getSize().x != (unsigned)avail.x ||
+            scene.getSize().y != (unsigned)avail.y)
+        {
+            scene.create(
+                static_cast<unsigned>(avail.x),
+                static_cast<unsigned>(avail.y)
+            );
+        }
+
+        ImGui::Image(scene, avail);
+
+        ImGui::End();
 
         scene.clear(sf::Color(30, 30, 30));
         scene.draw(cube);

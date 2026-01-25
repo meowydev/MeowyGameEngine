@@ -44,9 +44,7 @@ add_subdirectory(external/imgui-sfml)
 
 # ---- executable
 add_executable(MeowyGameEngine main.cpp
-        engine/windows.h
-        engine/includesh.h
-        engine/includes.h)
+)
 
 # ---- link libs
 target_link_libraries(MeowyGameEngine
