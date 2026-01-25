@@ -6,7 +6,7 @@
 #include <algorithm>            // std::min
 #include "engine/windows.h"
 
-sf::RenderTexture scenes;
+sf::RenderTexture scene;
 
 int main()
 {
@@ -111,7 +111,7 @@ int main()
             );
 
             ImGui::DockBuilderDockWindow("Scene", dockScene);
-            ImGui::DockBuilderDockWindow("Assets", dockAssets);
+            ImGui::DockBuilderDockWindow("General", dockAssets);
 
             ImGui::DockBuilderFinish(dockspaceID);
 
@@ -125,8 +125,6 @@ int main()
         scene.clear(sf::Color(30, 30, 30));
         scene.draw(cube);
         scene.display();
-
-        // ---------- FINAL ----------
 
         window.clear(sf::Color::Black);
         ImGui::SFML::Render(window);
