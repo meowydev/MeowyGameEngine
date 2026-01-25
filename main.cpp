@@ -6,6 +6,9 @@
 #include <vector>               // std::vector
 #include <algorithm>            // std::min
 #include "engine/CodeEditor.h"
+#include <string>
+
+std::string editorCode = "test \"hi\"";
 
 int main()
 {
@@ -14,6 +17,10 @@ int main()
         "Meowy Engine"
     );
     ImGui::SFML::Init(window);
+
+    //vars
+    static bool runGame = false;
+    static std::string runGameName = "Run game";
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // enable docking
@@ -129,6 +136,20 @@ int main()
         ImGui::End();
 
         ImGui::Begin("Scene");
+
+        if (ImGui::Button(runGameName.c_str()))
+        {
+            if (runGame == true)
+            {
+                runGame = false;
+                runGameName = "Run game";
+            }
+            if (runGame == false)
+            {
+                runGame = true;
+                runGameName = "Stop game";
+            }
+        }
 
         ImVec2 avail = ImGui::GetContentRegionAvail();
 
