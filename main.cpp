@@ -7,8 +7,11 @@
 #include <algorithm>            // std::min
 #include "engine/CodeEditor.h"
 #include <string>
+#include "engine/HLangRuntime.h"
 
 std::string editorCode = "test \"hi\"";
+
+static bool executedOnce = false;
 
 int main()
 {
@@ -47,6 +50,8 @@ int main()
     cube.setPosition(200.f, 200.f);
 
     static bool firstFrame = true; // run layout once
+
+    spdlog::info("Engine Cycle started");
 
     while (window.isOpen())
     {
@@ -139,16 +144,24 @@ int main()
 
         if (ImGui::Button(runGameName.c_str()))
         {
-            if (runGame == true)
-            {
-                runGame = false;
-                runGameName = "Run game";
-            }
-            if (runGame == false)
-            {
-                runGame = true;
-                runGameName = "Stop game";
-            }
+            runGame = true;
+            //if (runGame == true)
+            //{
+            //    runGame = false;
+            //    runGameName = "Run game";
+            //}
+            //if (runGame == false)
+            //{
+            //    runGame = true;
+            //    runGameName = "Stop game";
+            //}
+        }
+
+        if (runGame && !executedOnce)
+        {
+            std::string code = editor.editor.GetText();
+            HLang::exec(code);
+            executedOnce = true;
         }
 
         ImVec2 avail = ImGui::GetContentRegionAvail();

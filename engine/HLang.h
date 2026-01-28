@@ -15,7 +15,7 @@ inline TextEditor::LanguageDefinition CreateHLang()
     TextEditor::LanguageDefinition lang;
 
     lang.mName = "H"; // what if we connect me (meowy engine) and H? meh
-    lang.mKeywords.insert("test"); // Test func
+    lang.mKeywords.insert("print"); // Test func
 
     //COMMENTS
     lang.mSingleLineComment = "//";

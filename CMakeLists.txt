@@ -53,6 +53,7 @@ add_executable(MeowyGameEngine
         main.cpp
         engine/HLang.h
         engine/CodeEditor.h
+        engine/HLangRuntime.h
 )
 
 target_compile_options(MeowyGameEngine PRIVATE -stdlib=libc++)
