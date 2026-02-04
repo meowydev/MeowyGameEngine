@@ -130,10 +130,8 @@ int main()
         }
         if (ImGui::BeginTabItem("DevMenu"))
         {
-            if (ImGui::Button("Crash"))
-            {
-                IM_ASSERT(false && "Crash button pressed");
-            }
+            
+            
 
             ImGui::EndTabItem();
         }

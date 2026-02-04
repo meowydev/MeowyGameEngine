@@ -12,6 +12,9 @@
 #include <vector>
 #include <sstream>
 #include <spdlog/spdlog.h>
+#include <SFML/Graphics.hpp>
+#include "types.h"
+#include <unordered_map>
 
 namespace HLang
 {
@@ -33,18 +36,30 @@ namespace HLang
 
                 if (firstQuote != std::string::npos && lastQuote != std::string::npos && firstQuote < lastQuote) //honestly idk what does that even mean i will ask chatgpt later
                 {
-                    std::string cmdrl = line.substr(firstQuote + 1, lastQuote - firstQuote - 1); // same for this
+                    std::string cmd = line.substr(firstQuote + 1, lastQuote - firstQuote - 1); // same for this
 
-                    spdlog::info("cmdrl: " + cmdrl);
+                    spdlog::info("game: " + cmd);
 
                 }
 
                 else
                 {
-                    spdlog::info("cmdrl: i heta you");
+                    spdlog::info("game: No param");
                 }
 
             }
+            // I will try to add a command here myself
+
+            if (line.starts_with("create.object"))
+            {
+                auto firstQuote = line.find('"');
+                auto lastQuote = line.rfind('"');
+                if (firstQuote != std::string::npos && lastQuote != std::string::npos)
+                {
+                    std::string cmd = line.substr(0, firstQuote + 1);
+                }
+            }
+
         }
     }
 }
