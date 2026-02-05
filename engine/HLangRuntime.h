@@ -38,17 +38,34 @@ namespace HLang
                 {
                     std::string cmd = line.substr(firstQuote + 1, lastQuote - firstQuote - 1); // same for this
 
-                    spdlog::info("game: " + cmd);
+                    spdlog::info("game_info: " + cmd);
 
                 }
 
                 else
                 {
-                    spdlog::info("game: No param");
+                    spdlog::info("print: No param");
                 }
 
             }
             // I will try to add a command here myself
+
+            if (line.starts_with("warn"))
+            {
+                auto firstQuote = line.find('"');
+                auto lastQuote = line.rfind('"');
+                if (firstQuote != std::string::npos && lastQuote != std::string::npos)
+                {
+                    std::string cmd = line.substr(firstQuote + 1, lastQuote - firstQuote - 1);
+
+                    spdlog::warn("game_warn: " + cmd);
+
+                }
+                else
+                {
+                    spdlog::warn("warn: No param");
+                }
+            }
 
             if (line.starts_with("create.object"))
             {

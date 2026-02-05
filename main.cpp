@@ -128,10 +128,10 @@ int main()
             editor.Draw();
             ImGui::EndTabItem();
         }
-        if (ImGui::BeginTabItem("DevMenu"))
+        if (ImGui::BeginTabItem("Console"))
         {
-            
-            
+
+            ImGui::Text("Console");
 
             ImGui::EndTabItem();
         }
