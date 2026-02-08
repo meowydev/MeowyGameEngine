@@ -14,4 +14,5 @@ i did that because imgui didnt have the best docs ever
 
 BUT im not vibe coding im just looking at what he said me to paste but i rewrite that atleast...
 
-edit: im improving the code too like in rungame button
+# Iteration 1: Complete
+# Iteration 2: WIP
